@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function Sidebar() {
   return (
@@ -7,13 +7,19 @@ export default function Sidebar() {
       <nav className="flex-1">
         <ul className="space-y-4">
           <li>
-            <Link href="/dashboard" className="hover:text-blue-400">Dashboard</Link>
+            <Link href="/dashboard" className="hover:text-blue-400">
+              Dashboard
+            </Link>
           </li>
           <li>
-            <Link href="#" className="hover:text-blue-400">Customers</Link>
+            <Link href="/customers" className="hover:text-blue-400">
+              Customers
+            </Link>
           </li>
           <li>
-            <Link href="#" className="hover:text-blue-400">Settings</Link>
+            <Link href="/settings" className="hover:text-blue-400">
+              Settings
+            </Link>
           </li>
         </ul>
       </nav>
