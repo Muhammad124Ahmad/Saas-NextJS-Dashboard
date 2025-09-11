@@ -53,10 +53,10 @@ export default function CustomersPage() {
 
   return (
     <main className="p-8">
-      <h1 className="text-3xl font-bold mb-6">Customers</h1>
+      <h1 className="text-3xl font-bold mb-8 text-[#222] tracking-tight">Customers</h1>
       {/* Add Customer Form */}
       <form
-        className="mb-8 flex gap-4 items-end bg-white p-4 rounded shadow"
+        className="mb-10 flex gap-4 items-end bg-white border border-[#e5eaf2] p-6 rounded-xl shadow-sm"
         onSubmit={handleAdd}
       >
         <input
@@ -93,10 +93,10 @@ export default function CustomersPage() {
         </button>
       </form>
       {/* Customers Table */}
-      <div className="bg-white rounded shadow p-6">
-        <table className="w-full text-left text-gray-900">
+      <div className="bg-white border border-[#e5eaf2] rounded-xl shadow-sm p-6">
+        <table className="w-full text-left text-[#222]">
           <thead>
-            <tr className="bg-gray-50 text-gray-800">
+            <tr className="bg-[#f3f6fd] text-[#2563eb]">
               <th className="py-2 px-2">Name</th>
               <th className="py-2 px-2">Plan</th>
               <th className="py-2 px-2">Status</th>
@@ -105,7 +105,7 @@ export default function CustomersPage() {
           </thead>
           <tbody>
             {customers.map((row) => (
-              <tr key={row.id} className="border-t hover:bg-gray-50 transition">
+              <tr key={row.id} className="border-t hover:bg-[#f3f6fd] transition-all duration-150">
                 {editingId === row.id ? (
                   <>
                     <td className="py-2 px-2 font-medium">

@@ -21,7 +21,7 @@ export default function SettingsPage() {
 
   return (
     <main className="p-8">
-      <h1 className="text-3xl font-bold mb-6">Settings</h1>
+  <h1 className="text-3xl font-bold mb-6 text-black">Settings</h1>
       <form className="bg-white p-6 rounded shadow max-w-md" onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block mb-1 font-medium text-gray-800">Name</label>
