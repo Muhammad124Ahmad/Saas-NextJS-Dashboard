@@ -1,9 +1,7 @@
+
 import React from "react";
-import {
-  mockStats,
-  mockChartData,
-  mockTableData,
-} from "../../data/mockDashboardData";
+import { mockStats, mockChartData, mockTableData } from "../../data/mockDashboardData";
+import RecentActivity from "../../components/RecentActivity";
 
 export default function DashboardPage() {
   return (
@@ -22,21 +20,19 @@ export default function DashboardPage() {
         ))}
       </div>
       {/* Chart (placeholder) */}
-      <div className="bg-white rounded shadow p-6 mb-8">
-        <h2 className="text-xl font-bold mb-4 text-gray-900">
-          User Growth (Mock Chart)
-        </h2>
-        <div className="flex space-x-4">
-          {mockChartData.map((data: { month: string; users: number }) => (
-            <div key={data.month} className="flex flex-col items-center">
-              <div
-                className="bg-blue-500 w-8"
-                style={{ height: `${data.users / 10}px` }}
-              ></div>
-              <span className="mt-2 text-sm text-gray-800">{data.month}</span>
-            </div>
-          ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div className="bg-white rounded shadow p-6">
+          <h2 className="text-xl font-bold mb-4 text-gray-900">User Growth (Mock Chart)</h2>
+          <div className="flex space-x-4">
+            {mockChartData.map((data: { month: string; users: number }) => (
+              <div key={data.month} className="flex flex-col items-center">
+                <div className="bg-blue-500 w-8" style={{ height: `${data.users / 10}px` }}></div>
+                <span className="mt-2 text-sm text-gray-800">{data.month}</span>
+              </div>
+            ))}
+          </div>
         </div>
+        <RecentActivity />
       </div>
       {/* Table */}
       <div className="bg-white rounded shadow p-6">
