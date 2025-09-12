@@ -15,13 +15,34 @@ export default function AuthForm({ mode = "login" }: { mode?: "login" | "signup"
     setError(null);
     setSuccess(null);
     if (mode === "login") {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setError(error.message);
-      else setSuccess("Logged in!");
+      else {
+        // On every login, upsert the user's profile row
+        if (data?.user) {
+          const { error: profileError } = await supabase.from('profiles').upsert([
+            { id: data.user.id, email: data.user.email, name: '' }
+          ], { onConflict: 'id' });
+          if (profileError) {
+            setError('Profile upsert error: ' + profileError.message);
+            setLoading(false);
+            return;
+          }
+        }
+        setSuccess("Logged in!");
+      }
     } else {
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) setError(error.message);
-      else setSuccess("Check your email for confirmation!");
+      else {
+        // Insert profile row after successful signup
+        if (data?.user) {
+          await supabase.from('profiles').insert([
+            { id: data.user.id, email: data.user.email, name: '' }
+          ]);
+        }
+        setSuccess("Check your email for confirmation!");
+      }
     }
     setLoading(false);
   };
