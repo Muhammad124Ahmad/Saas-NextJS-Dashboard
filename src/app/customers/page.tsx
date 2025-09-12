@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import { supabase } from "../../supabaseClient";
 import { StatusBadge } from "../../components/StatusBadge";
-import { useRef } from "react";
 interface Customer {
   id: number;
   name: string;
