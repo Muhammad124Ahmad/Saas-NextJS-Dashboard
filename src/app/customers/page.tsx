@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import { supabase } from "../../supabaseClient";
 import { StatusBadge } from "../../components/StatusBadge";
+import { useRef } from "react";
 interface Customer {
   id: number;
   name: string;
@@ -11,7 +12,18 @@ interface Customer {
   created_at?: string;
 }
 
+
+interface PaymentFormState {
+  [customerId: number]: {
+    show: boolean;
+    amount: string;
+    error: string;
+    success: string;
+  };
+}
+
 export default function CustomersPage() {
+
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [newCustomer, setNewCustomer] = useState({
     name: "",
@@ -25,6 +37,56 @@ export default function CustomersPage() {
     status: "Active",
   });
   const [addError, setAddError] = useState<string>("");
+  const [paymentForm, setPaymentForm] = useState<PaymentFormState>({});
+  // Handle payment form open/close and submit
+  const handleShowPayment = (customerId: number) => {
+    setPaymentForm((prev) => ({
+      ...prev,
+      [customerId]: { show: true, amount: "", error: "", success: "" },
+    }));
+  };
+  const handleHidePayment = (customerId: number) => {
+    setPaymentForm((prev) => ({
+      ...prev,
+      [customerId]: { show: false, amount: "", error: "", success: "" },
+    }));
+  };
+  const handlePaymentChange = (customerId: number, value: string) => {
+    setPaymentForm((prev) => ({
+      ...prev,
+      [customerId]: { ...prev[customerId], amount: value },
+    }));
+  };
+  const handleAddPayment = async (customerId: number) => {
+    const amount = paymentForm[customerId]?.amount;
+    if (!amount || isNaN(Number(amount))) {
+      setPaymentForm((prev) => ({
+        ...prev,
+        [customerId]: { ...prev[customerId], error: "Enter a valid amount.", success: "" },
+      }));
+      return;
+    }
+    const { error } = await supabase.from("payments").insert([
+      { user_id: customerId, amount: parseFloat(amount) },
+    ]);
+    if (error) {
+      setPaymentForm((prev) => ({
+        ...prev,
+        [customerId]: { ...prev[customerId], error: error.message, success: "" },
+      }));
+      return;
+    }
+    setPaymentForm((prev) => ({
+      ...prev,
+      [customerId]: { ...prev[customerId], error: "", success: "Payment added!" },
+    }));
+
+    // Log activity
+    const customer = customers.find((c) => c.id === customerId);
+    await supabase.from('activities').insert([
+      { description: `Added payment for customer: ${customer ? customer.name : customerId} ($${parseFloat(amount).toFixed(2)})` }
+    ]);
+  };
 
   // Fetch customers from Supabase
   useEffect(() => {
@@ -60,11 +122,27 @@ export default function CustomersPage() {
     }
     if (data) setCustomers([data[0], ...customers]);
     setNewCustomer({ name: "", plan: "", status: "Active" });
+
+    // Log activity
+    if (data && data[0]) {
+      await supabase.from('activities').insert([
+        { description: `Added customer: ${data[0].name}` }
+      ]);
+    }
   };
 
   const handleDelete = async (id: number) => {
+    const customer = customers.find((c) => c.id === id);
     const { error } = await supabase.from("customers").delete().eq("id", id);
-    if (!error) setCustomers(customers.filter((c) => c.id !== id));
+    if (!error) {
+      setCustomers(customers.filter((c) => c.id !== id));
+      // Log activity
+      if (customer) {
+        await supabase.from('activities').insert([
+          { description: `Deleted customer: ${customer.name}` }
+        ]);
+      }
+    }
   };
 
   const handleEdit = (customer: Customer) => {
@@ -85,6 +163,10 @@ export default function CustomersPage() {
       .select();
     if (!error && data) {
       setCustomers(customers.map((c) => (c.id === id ? { ...c, ...data[0] } : c)));
+      // Log activity
+      await supabase.from('activities').insert([
+        { description: `Edited customer: ${data[0].name}` }
+      ]);
     }
     setEditingId(null);
   };
@@ -198,7 +280,7 @@ export default function CustomersPage() {
                       <span className="block text-xs text-gray-500">Status</span>
                       <StatusBadge status={row.status} />
                     </div>
-                    <div className="flex gap-2 mt-2">
+                    <div className="flex gap-2 mt-2 flex-wrap">
                       <button
                         className="text-blue-600 hover:text-blue-800 font-semibold px-2 py-1 rounded hover:bg-blue-50 transition w-full"
                         onClick={() => handleEdit(row)}
@@ -213,7 +295,43 @@ export default function CustomersPage() {
                       >
                         Delete
                       </button>
+                      <button
+                        className="text-green-600 hover:text-green-800 font-semibold px-2 py-1 rounded hover:bg-green-50 transition w-full"
+                        onClick={() => handleShowPayment(row.id)}
+                        type="button"
+                      >
+                        Add Payment
+                      </button>
                     </div>
+                    {paymentForm[row.id]?.show && (
+                      <div className="mt-2 bg-gray-50 p-2 rounded border">
+                        <input
+                          className="border p-1 rounded w-24 mr-2"
+                          placeholder="Amount"
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={paymentForm[row.id]?.amount || ""}
+                          onChange={e => handlePaymentChange(row.id, e.target.value)}
+                        />
+                        <button
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded"
+                          onClick={() => handleAddPayment(row.id)}
+                          type="button"
+                        >
+                          Save
+                        </button>
+                        <button
+                          className="ml-2 text-gray-600 hover:text-gray-900"
+                          onClick={() => handleHidePayment(row.id)}
+                          type="button"
+                        >
+                          Cancel
+                        </button>
+                        {paymentForm[row.id]?.error && <div className="text-red-600 text-xs mt-1">{paymentForm[row.id].error}</div>}
+                        {paymentForm[row.id]?.success && <div className="text-green-600 text-xs mt-1">{paymentForm[row.id].success}</div>}
+                      </div>
+                    )}
                   </>
                 )}
               </div>
@@ -297,6 +415,42 @@ export default function CustomersPage() {
                           >
                             Delete
                           </button>
+                          <button
+                            className="text-green-600 hover:text-green-800 font-semibold px-2 py-1 rounded hover:bg-green-50 transition w-full sm:w-auto"
+                            onClick={() => handleShowPayment(row.id)}
+                            type="button"
+                          >
+                            Add Payment
+                          </button>
+                          {paymentForm[row.id]?.show && (
+                            <div className="mt-2 bg-gray-50 p-2 rounded border">
+                              <input
+                                className="border p-1 rounded w-24 mr-2"
+                                placeholder="Amount"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                value={paymentForm[row.id]?.amount || ""}
+                                onChange={e => handlePaymentChange(row.id, e.target.value)}
+                              />
+                              <button
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded"
+                                onClick={() => handleAddPayment(row.id)}
+                                type="button"
+                              >
+                                Save
+                              </button>
+                              <button
+                                className="ml-2 text-gray-600 hover:text-gray-900"
+                                onClick={() => handleHidePayment(row.id)}
+                                type="button"
+                              >
+                                Cancel
+                              </button>
+                              {paymentForm[row.id]?.error && <div className="text-red-600 text-xs mt-1">{paymentForm[row.id].error}</div>}
+                              {paymentForm[row.id]?.success && <div className="text-green-600 text-xs mt-1">{paymentForm[row.id].success}</div>}
+                            </div>
+                          )}
                         </td>
                       </>
                     )}

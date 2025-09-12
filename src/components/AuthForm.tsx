@@ -23,8 +23,17 @@ export default function AuthForm({ mode = "login" }: { mode?: "login" | "signup"
           const { error: profileError } = await supabase.from('profiles').upsert([
             { id: data.user.id, email: data.user.email, name: '' }
           ], { onConflict: 'id' });
+          // Upsert into users table as well
+          const { error: userError } = await supabase.from('users').upsert([
+            { id: data.user.id, email: data.user.email }
+          ], { onConflict: 'id' });
           if (profileError) {
             setError('Profile upsert error: ' + profileError.message);
+            setLoading(false);
+            return;
+          }
+          if (userError) {
+            setError('User upsert error: ' + userError.message);
             setLoading(false);
             return;
           }
@@ -35,10 +44,13 @@ export default function AuthForm({ mode = "login" }: { mode?: "login" | "signup"
       const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) setError(error.message);
       else {
-        // Insert profile row after successful signup
+        // Insert profile row and users row after successful signup
         if (data?.user) {
           await supabase.from('profiles').insert([
             { id: data.user.id, email: data.user.email, name: '' }
+          ]);
+          await supabase.from('users').insert([
+            { id: data.user.id, email: data.user.email }
           ]);
         }
         setSuccess("Check your email for confirmation!");

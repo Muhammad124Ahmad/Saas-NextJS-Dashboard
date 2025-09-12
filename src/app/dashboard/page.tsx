@@ -14,17 +14,19 @@ export default function DashboardPage() {
   const [userGrowth, setUserGrowth] = useState<{ month: string; users: number }[]>([]);
 
   useEffect(() => {
-    // Fetch active users (count from auth.users)
+    // Fetch stats from users table
     const fetchStats = async () => {
-      // Active Users
-      const { data: users, error: usersError } = await supabase.auth.admin.listUsers();
-      if (!usersError && users && users.users) {
-        setActiveUsers(users.users.length);
+      // Fetch all customers
+      const { data: customers, error: customersError } = await supabase.from('customers').select('id, status, created_at');
+      if (!customersError && customers) {
+        // Active Users = customers with status 'Active'
+        const active = customers.filter((c: any) => c.status === 'Active');
+        setActiveUsers(active.length);
 
         // New Signups (last 7 days)
         const weekAgo = new Date();
         weekAgo.setDate(weekAgo.getDate() - 7);
-        const newSignupsCount = users.users.filter(u => new Date(u.created_at) > weekAgo).length;
+        const newSignupsCount = customers.filter((c: any) => new Date(c.created_at) > weekAgo).length;
         setNewSignups(newSignupsCount);
 
         // User Growth (per month for last 6 months)
@@ -35,8 +37,8 @@ export default function DashboardPage() {
           const key = d.toLocaleString('default', { month: 'short', year: '2-digit' });
           growth[key] = 0;
         }
-        users.users.forEach(u => {
-          const d = new Date(u.created_at);
+        customers.forEach((c: any) => {
+          const d = new Date(c.created_at);
           const key = d.toLocaleString('default', { month: 'short', year: '2-digit' });
           if (growth[key] !== undefined) growth[key]++;
         });
@@ -46,13 +48,30 @@ export default function DashboardPage() {
       // Revenue (sum from payments table if exists)
       const { data: payments, error: paymentsError } = await supabase.from('payments').select('amount');
       if (!paymentsError && payments) {
-        setRevenue(payments.reduce((sum, p) => sum + (p.amount || 0), 0));
+        setRevenue(payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0));
       } else {
         setRevenue(0); // Placeholder if no payments table
       }
 
-      // Churn Rate (placeholder, needs a flag or status in users or customers table)
-      setChurnRate("-");
+      // Churn Rate: % of customers who became inactive in last 30 days and were active 30 days ago
+      const { data: churnCustomers, error: churnCustomersError } = await supabase.from('customers').select('id, status, created_at, updated_at');
+      if (!churnCustomersError && churnCustomers) {
+        const now = new Date();
+        const monthAgo = new Date();
+        monthAgo.setDate(now.getDate() - 30);
+        // Customers who became inactive in last 30 days (status is Inactive, updated_at in last 30 days, and created_at before 30 days ago)
+        const churned = churnCustomers.filter((c: any) =>
+          c.status === 'Inactive' &&
+          c.updated_at && new Date(c.updated_at) > monthAgo &&
+          new Date(c.created_at) <= monthAgo
+        );
+        // Customers who were active 30 days ago (created before 30 days ago)
+        const totalMonthAgo = churnCustomers.filter((c: any) => new Date(c.created_at) <= monthAgo);
+        const churnRateValue = totalMonthAgo.length > 0 ? (churned.length / totalMonthAgo.length) * 100 : 0;
+        setChurnRate(totalMonthAgo.length > 0 ? churnRateValue.toFixed(1) + '%' : '-');
+      } else {
+        setChurnRate('-');
+      }
     };
     fetchStats();
   }, []);
