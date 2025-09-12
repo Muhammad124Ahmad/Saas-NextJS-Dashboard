@@ -59,11 +59,11 @@ export default function DashboardPage() {
 
   return (
     <ProtectedRoute>
-      <main className="p-8">
-        <h1 className="text-3xl font-bold mb-8 text-[#222] tracking-tight">Dashboard</h1>
+  <main className="p-4 sm:p-6 md:p-8">
+  <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-[#222] tracking-tight">Dashboard</h1>
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-          <div className="bg-white border border-[#e5eaf2] rounded-xl shadow-sm p-6 text-center transition-transform duration-200 hover:scale-105 hover:shadow-md">
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-10">
+          <div className="bg-white border border-[#e5eaf2] rounded-xl shadow-sm p-4 sm:p-6 text-center transition-transform duration-200 hover:scale-105 hover:shadow-md">
             <div className="text-2xl font-bold text-[#2563eb] mb-1">{activeUsers}</div>
             <div className="text-base text-[#222] font-medium tracking-tight">Active Users</div>
           </div>
@@ -81,17 +81,17 @@ export default function DashboardPage() {
           </div>
         </div>
         {/* Chart */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-          <div className="bg-white border border-[#e5eaf2] rounded-xl shadow-sm p-6">
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-10">
+          <div className="bg-white border border-[#e5eaf2] rounded-xl shadow-sm p-4 sm:p-6">
             <h2 className="text-lg font-bold mb-4 text-[#2563eb]">User Growth</h2>
-            <div className="flex space-x-4 items-end h-40">
+            <div className="flex space-x-2 sm:space-x-4 items-end h-32 sm:h-40 overflow-x-auto scrollbar-thin scrollbar-thumb-blue-200">
               {userGrowth.map((data) => (
-                <div key={data.month} className="flex flex-col items-center group">
+                <div key={data.month} className="flex flex-col items-center group min-w-[48px]">
                   <div
-                    className="bg-gradient-to-t from-[#2563eb] to-[#60a5fa] w-8 rounded-lg shadow transition-all duration-200 group-hover:scale-110 group-hover:shadow-md"
+                    className="bg-gradient-to-t from-[#2563eb] to-[#60a5fa] w-6 sm:w-8 rounded-lg shadow transition-all duration-200 group-hover:scale-110 group-hover:shadow-md"
                     style={{ height: `${data.users * 8}px` }}
                   ></div>
-                  <span className="mt-2 text-sm text-[#2563eb] font-semibold">{data.month}</span>
+                  <span className="mt-2 text-xs sm:text-sm text-[#2563eb] font-semibold">{data.month}</span>
                 </div>
               ))}
             </div>

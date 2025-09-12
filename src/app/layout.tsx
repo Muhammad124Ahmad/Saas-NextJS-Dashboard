@@ -14,12 +14,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className="antialiased bg-[#f7fafd] text-[#1a1a1a] font-sans min-h-screen">
-        <div className="flex min-h-screen">
+        <div className="flex bg-[#f7fafd]">
           <Sidebar />
-          <div className="flex-1 flex flex-col bg-white border-l border-[#e5eaf2] ml-56">
+          <div className="flex-1 flex flex-col bg-white">
             {/* Top Bar */}
             <TopBar />
-            <main className="flex-1 px-8">{children}</main>
+            <main className="flex-1 min-h-screen px-4 sm:px-8">{children}</main>
           </div>
         </div>
       </body>
