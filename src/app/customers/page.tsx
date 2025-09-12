@@ -4,7 +4,7 @@ import ProtectedRoute from "../../components/ProtectedRoute";
 import { supabase } from "../../supabaseClient";
 import { StatusBadge } from "../../components/StatusBadge";
 interface Customer {
-  id: number;
+  id: string;
   name: string;
   plan: string;
   status: string;
@@ -13,7 +13,7 @@ interface Customer {
 
 
 interface PaymentFormState {
-  [customerId: number]: {
+  [customerId: string]: {
     show: boolean;
     amount: string;
     error: string;
@@ -29,7 +29,7 @@ export default function CustomersPage() {
     plan: "",
     status: "Active",
   });
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState({
     name: "",
     plan: "",
@@ -38,25 +38,25 @@ export default function CustomersPage() {
   const [addError, setAddError] = useState<string>("");
   const [paymentForm, setPaymentForm] = useState<PaymentFormState>({});
   // Handle payment form open/close and submit
-  const handleShowPayment = (customerId: number) => {
+  const handleShowPayment = (customerId: string) => {
     setPaymentForm((prev) => ({
       ...prev,
       [customerId]: { show: true, amount: "", error: "", success: "" },
     }));
   };
-  const handleHidePayment = (customerId: number) => {
+  const handleHidePayment = (customerId: string) => {
     setPaymentForm((prev) => ({
       ...prev,
       [customerId]: { show: false, amount: "", error: "", success: "" },
     }));
   };
-  const handlePaymentChange = (customerId: number, value: string) => {
+  const handlePaymentChange = (customerId: string, value: string) => {
     setPaymentForm((prev) => ({
       ...prev,
       [customerId]: { ...prev[customerId], amount: value },
     }));
   };
-  const handleAddPayment = async (customerId: number) => {
+  const handleAddPayment = async (customerId: string) => {
     const amount = paymentForm[customerId]?.amount;
     if (!amount || isNaN(Number(amount))) {
       setPaymentForm((prev) => ({
@@ -130,7 +130,7 @@ export default function CustomersPage() {
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     const customer = customers.find((c) => c.id === id);
     const { error } = await supabase.from("customers").delete().eq("id", id);
     if (!error) {
@@ -154,7 +154,7 @@ export default function CustomersPage() {
   };
 
 
-  const handleEditSave = async (id: number) => {
+  const handleEditSave = async (id: string) => {
     const { data, error } = await supabase
       .from("customers")
       .update(editData)
