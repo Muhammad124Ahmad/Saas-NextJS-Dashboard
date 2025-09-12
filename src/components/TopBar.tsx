@@ -3,6 +3,7 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import { getSectionTitle } from "../utils/sectionTitle";
+import LogoutButton from "./LogoutButton";
 
 export default function TopBar() {
   const [showNotifications, setShowNotifications] = React.useState(false);
@@ -52,7 +53,7 @@ export default function TopBar() {
           <img src="https://i.pravatar.cc/40?img=3" alt="avatar" className="w-9 h-9 rounded-full border-2 border-[#2563eb] cursor-pointer" />
           <div className="absolute right-0 mt-2 w-40 bg-white border border-[#e5eaf2] rounded shadow-lg opacity-0 group-hover:opacity-100 transition z-10">
             <a href="/settings" className="block px-4 py-2 text-[#2563eb] hover:bg-[#f3f6fd]">Settings</a>
-            <button className="block w-full text-left px-4 py-2 text-[#1a1a1a] hover:bg-[#f3f6fd]">Logout</button>
+            <div className="px-4 py-2"><LogoutButton /></div>
           </div>
         </div>
       </div>
