@@ -6,8 +6,8 @@ import TopBar from "../components/TopBar";
 import Sidebar from "../components/Sidebar";
 
 export const metadata: Metadata = {
-  title: "SaaS Dashboard",
-  description: "Modern SaaS dashboard app",
+  title: "Saaslytic",
+  description: "Modern analytics dashboard app",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

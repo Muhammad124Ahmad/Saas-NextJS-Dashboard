@@ -31,7 +31,7 @@ export default function Sidebar() {
             : "bg-[#f7fafd] border-r border-[#e5eaf2] flex flex-col p-6 z-40 lg:static lg:w-56 lg:z-30 lg:translate-x-0"
         }
       >
-        <div className="text-2xl font-extrabold mb-10 tracking-tight text-[#2563eb] select-none">SaaS Dashboard</div>
+  <div className="text-2xl font-extrabold mb-10 tracking-tight text-[#2563eb] select-none">Saaslytic</div>
         <nav className="flex-1">
           <ul className="space-y-2">
             <li>
@@ -45,7 +45,7 @@ export default function Sidebar() {
             </li>
           </ul>
         </nav>
-        <div className="mt-auto text-xs text-[#6b7280] select-none">&copy; 2025 SaaS Inc.</div>
+  <div className="mt-auto text-xs text-[#6b7280] select-none">&copy; 2025 Saaslytic</div>
       </aside>
     </>
   );

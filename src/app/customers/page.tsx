@@ -222,7 +222,7 @@ export default function CustomersPage() {
                 {editingId === row.id ? (
                   <>
                     <div>
-                      <span className="block text-xs text-gray-500 mb-1">Name</span>
+                      <span className="block text-xs text-black mb-1">Name</span>
                       <input
                         className="border p-1 rounded w-full text-gray-900"
                         value={editData.name}
@@ -230,7 +230,7 @@ export default function CustomersPage() {
                       />
                     </div>
                     <div>
-                      <span className="block text-xs text-gray-500 mb-1">Plan</span>
+                      <span className="block text-xs text-black mb-1">Plan</span>
                       <input
                         className="border p-1 rounded w-full text-gray-900"
                         value={editData.plan}
@@ -268,12 +268,12 @@ export default function CustomersPage() {
                 ) : (
                   <>
                     <div className="flex justify-between items-center">
-                      <span className="block text-xs text-gray-500">Name</span>
-                      <span className="font-medium">{row.name}</span>
+                      <span className="block text-xs text-black">Name</span>
+                      <span className="font-medium text-black">{row.name}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="block text-xs text-gray-500">Plan</span>
-                      <span>{row.plan}</span>
+                      <span className="block text-xs text-black">Plan</span>
+                      <span className="text-black font-medium">{row.plan}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="block text-xs text-gray-500">Status</span>

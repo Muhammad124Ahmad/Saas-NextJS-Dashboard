@@ -88,7 +88,7 @@ export default function DashboardPage() {
   return (
     <ProtectedRoute>
   <main className="p-4 sm:p-6 md:p-8">
-  <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-[#222] tracking-tight">Dashboard</h1>
+  <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-[#222] tracking-tight">Saaslytic</h1>
         {/* Stats */}
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-10">
           <div className="bg-white border border-[#e5eaf2] rounded-xl shadow-sm p-4 sm:p-6 text-center transition-transform duration-200 hover:scale-105 hover:shadow-md">
