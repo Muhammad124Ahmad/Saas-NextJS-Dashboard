@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { supabase } from "../supabaseClient";
+import { useRouter } from "next/navigation";
 
 export default function AuthForm({ mode = "login" }: { mode?: "login" | "signup" }) {
   const [email, setEmail] = useState("");
@@ -8,6 +9,7 @@ export default function AuthForm({ mode = "login" }: { mode?: "login" | "signup"
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,6 +41,7 @@ export default function AuthForm({ mode = "login" }: { mode?: "login" | "signup"
           }
         }
         setSuccess("Logged in!");
+        router.push("/dashboard");
       }
     } else {
       const { data, error } = await supabase.auth.signUp({ email, password });

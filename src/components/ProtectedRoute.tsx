@@ -1,21 +1,27 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../supabaseClient";
 
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState<null | boolean>(null);
 
   useEffect(() => {
+    let mounted = true;
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) {
-        router.replace("/login");
+      if (!user && mounted) {
+        router.push("/login");
+        setIsLoggedIn(false);
+      } else if (mounted) {
+        setIsLoggedIn(true);
       }
-      setLoading(false);
     });
+    return () => { mounted = false; };
   }, [router]);
 
-  if (loading) return <div className="p-8 text-center">Loading...</div>;
+  if (isLoggedIn === null) return <div className="p-8 text-center">Checking authentication...</div>;
+  if (!isLoggedIn) return null;
   return <>{children}</>;
 }

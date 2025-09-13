@@ -16,8 +16,8 @@ export default function LoginLogoutButton() {
     };
   }, []);
 
-  const handleLogin = () => {
-    window.location.href = "/login";
+  const handleSignUp = () => {
+    window.location.href = "/signup";
   };
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -27,6 +27,6 @@ export default function LoginLogoutButton() {
   return loggedIn ? (
     <button onClick={handleLogout} className="px-4 py-2 text-[#2563eb] hover:bg-[#f3f6fd] rounded font-medium">Logout</button>
   ) : (
-    <button onClick={handleLogin} className="px-4 py-2 text-[#2563eb] hover:bg-[#f3f6fd] rounded font-medium">Login</button>
+    <button onClick={handleSignUp} className="px-4 py-2 text-[#2563eb] hover:bg-[#f3f6fd] rounded font-medium">Sign Up</button>
   );
 }
