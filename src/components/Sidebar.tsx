@@ -31,7 +31,10 @@ export default function Sidebar() {
             : "bg-[#f7fafd] border-r border-[#e5eaf2] flex flex-col p-6 z-40 lg:static lg:w-56 lg:z-30 lg:translate-x-0"
         }
       >
-  <div className="text-2xl font-extrabold mb-10 tracking-tight text-[#2563eb] select-none">Saaslytic</div>
+        <div className="flex items-center gap-2 mb-10 select-none">
+          <img src="/saaslytic-logo.svg" alt="Saaslytic Logo" className="w-8 h-8" />
+          <span className="text-2xl font-extrabold tracking-tight text-[#2563eb]">Saaslytic</span>
+        </div>
         <nav className="flex-1">
           <ul className="space-y-2">
             <li>

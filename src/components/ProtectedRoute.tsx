@@ -10,14 +10,27 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
 
   useEffect(() => {
     let mounted = true;
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user && mounted) {
-        router.push("/login");
-        setIsLoggedIn(false);
-      } else if (mounted) {
-        setIsLoggedIn(true);
+    (async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user && mounted) {
+          setIsLoggedIn(false);
+          router.push("/login?session=expired");
+        } else if (mounted) {
+          setIsLoggedIn(true);
+        }
+      } catch (err: any) {
+        // Handle Supabase AuthApiError for invalid refresh token
+        if (err?.message?.includes("Invalid Refresh Token")) {
+          await supabase.auth.signOut();
+          setIsLoggedIn(false);
+          router.push("/login?session=expired");
+        } else {
+          setIsLoggedIn(false);
+          router.push("/login");
+        }
       }
-    });
+    })();
     return () => { mounted = false; };
   }, [router]);
 
