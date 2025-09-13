@@ -19,9 +19,15 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
         } else if (mounted) {
           setIsLoggedIn(true);
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         // Handle Supabase AuthApiError for invalid refresh token
-        if (err?.message?.includes("Invalid Refresh Token")) {
+        if (
+          typeof err === "object" &&
+          err !== null &&
+          "message" in err &&
+          typeof (err as { message?: string }).message === "string" &&
+          (err as { message: string }).message.includes("Invalid Refresh Token")
+        ) {
           await supabase.auth.signOut();
           setIsLoggedIn(false);
           router.push("/login?session=expired");
